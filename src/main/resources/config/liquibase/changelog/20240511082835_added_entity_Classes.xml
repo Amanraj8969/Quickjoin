@@ -17,7 +17,7 @@
             <column name="title" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="description" type="varchar(500)">
+            <column name="description" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="techer_name" type="varchar(255)">

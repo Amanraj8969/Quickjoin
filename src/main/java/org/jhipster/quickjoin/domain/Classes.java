@@ -24,7 +24,6 @@ public class Classes implements Serializable {
     private String title;
 
     @NotNull(message = "must not be null")
-     @Size(max = 500, message = "Description must not exceed 500 characters")
     @Column("description")
     private String description;
 

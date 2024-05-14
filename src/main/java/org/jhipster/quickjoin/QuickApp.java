@@ -1,5 +1,9 @@
 package org.jhipster.quickjoin;
 
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 import jakarta.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -31,44 +35,27 @@ public class QuickApp {
         this.env = env;
     }
 
-    /**
-     * Initializes quick.
-     * <p>
-     * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
-     * <p>
-     * You can find more information on how profiles work with JHipster on <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
-     */
-    @PostConstruct
-    public void initApplication() {
-        Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
-        if (
-            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) &&
-            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)
-        ) {
-            log.error(
-                "You have misconfigured your application! It should not run " + "with both the 'dev' and 'prod' profiles at the same time."
-            );
-        }
-        if (
-            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) &&
-            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)
-        ) {
-            log.error(
-                "You have misconfigured your application! It should not " + "run with both the 'dev' and 'cloud' profiles at the same time."
-            );
-        }
-    }
-
-    /**
-     * Main method, used to run the application.
-     *
-     * @param args the command line arguments.
-     */
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(QuickApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
+
+        // Initialize Stripe
+        Stripe.apiKey = "sk_test_51MPm5BSJseISqjDO87xbdKZ4n00lPdqtTDGIYgif2x9VtQXm4Eq3si8zQO1Fgc7fEuvoq2en1PEZKhmFtXQNTfhb00BzIv8oGH";
+
+        // Example: Create a payment intent
+        try {
+            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                .setAmount(1000L) // Amount in cents as Long
+                .setCurrency("usd")
+                .build();
+
+            PaymentIntent intent = PaymentIntent.create(params);
+            System.out.println("Payment intent created: " + intent.getId());
+        } catch (StripeException e) {
+            System.err.println("Error creating payment intent: " + e.getMessage());
+        }
     }
 
     private static void logApplicationStartup(Environment env) {
@@ -104,5 +91,26 @@ public class QuickApp {
             contextPath,
             env.getActiveProfiles().length == 0 ? env.getDefaultProfiles() : env.getActiveProfiles()
         );
+    }
+
+    @PostConstruct
+    public void initApplication() {
+        Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
+        if (
+            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) &&
+            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)
+        ) {
+            log.error(
+                "You have misconfigured your application! It should not run " + "with both the 'dev' and 'prod' profiles at the same time."
+            );
+        }
+        if (
+            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) &&
+            activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)
+        ) {
+            log.error(
+                "You have misconfigured your application! It should not " + "run with both the 'dev' and 'cloud' profiles at the same time."
+            );
+        }
     }
 }

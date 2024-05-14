@@ -136,6 +136,9 @@ server:
 springdoc:
   show-actuator: true
 
+stripe:
+  secret-key: sk_test_51MPm5BSJseISqjDO87xbdKZ4n00lPdqtTDGIYgif2x9VtQXm4Eq3si8zQO1Fgc7fEuvoq2en1PEZKhmFtXQNTfhb00BzIv8oGH
+
 # Properties to be exposed on the /info management endpoint
 info:
   # Comma separated list of profiles that will trigger the ribbon to show
